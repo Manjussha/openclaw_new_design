@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw — Agent UI Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+    --bg-tertiary: #1a1a26;
+    --bg-card: #16161f;
+    --bg-hover: #1e1e2a;
+    --border: #2a2a3a;
+    --border-active: #4a4a6a;
+    --text-primary: #e4e4ef;
+    --text-secondary: #8888a0;
+    --text-muted: #55556a;
+    --accent: #6c5ce7;
+    --accent-light: #a29bfe;
+    --green: #00e676;
+    --green-dim: #00c85320;
+    --orange: #ff9f43;
+    --orange-dim: #ff9f4320;
+    --red: #ff5252;
+    --red-dim: #ff525220;
+    --blue: #2196f3;
+    --blue-dim: #2196f320;
+    --cyan: #00bcd4;
+    --cyan-dim: #00bcd420;
+    --purple: #9c27b0;
+    --purple-dim: #9c27b020;
+    --yellow: #ffd600;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 280px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text { font-weight: 700; font-size: 16px; }
+  .logo-version { font-size: 11px; color: var(--text-muted); }
+
+  .sidebar-section { padding: 16px 12px 8px; }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .nav-item.active { background: var(--accent)20; color: var(--accent-light); }
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .agent-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-left: auto;
+  }
+  .agent-status.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .agent-status.busy { background: var(--orange); box-shadow: 0 0 6px var(--orange); }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .model-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    font-size: 12px;
+  }
+  .model-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+  }
+  .model-name { font-weight: 600; color: var(--text-primary); }
+  .model-provider { color: var(--text-muted); font-size: 11px; }
+
+  /* ── Main ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .topbar {
+    height: 56px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .topbar-title { font-weight: 600; font-size: 15px; }
+  .topbar-sep { color: var(--text-muted); }
+  .topbar-sub { color: var(--text-secondary); font-size: 13px; }
+
+  .topbar-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  .topbar-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .topbar-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  /* ── Chat Area ── */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-area::-webkit-scrollbar { width: 6px; }
+  .chat-area::-webkit-scrollbar-track { background: transparent; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Messages ── */
+  .message { max-width: 900px; width: 100%; margin: 0 auto; }
+
+  .user-msg {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .avatar.user { background: var(--accent); }
+  .avatar.agent { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+
+  .msg-content {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .msg-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .msg-author { font-weight: 600; font-size: 13px; }
+  .msg-time { font-size: 11px; color: var(--text-muted); }
+  .msg-channel {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--blue-dim);
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  /* ── Agent Response ── */
+  .agent-response {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .response-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .response-label {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .response-model {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--accent)20;
+    color: var(--accent-light);
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .response-tokens {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Thinking Block ── */
+  .thinking-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .thinking-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .thinking-header:hover { background: var(--bg-hover); }
+
+  .thinking-icon { font-size: 14px; }
+  .thinking-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-light);
+  }
+  .thinking-duration {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .thinking-chevron {
+    margin-left: auto;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    font-size: 12px;
+  }
+  .thinking-block.open .thinking-chevron { transform: rotate(180deg); }
+
+  .thinking-body {
+    display: none;
+    padding: 0 14px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .thinking-block.open .thinking-body { display: block; }
+
+  /* ── Task Planner ── */
+  .task-planner {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .planner-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+  }
+
+  .planner-title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .planner-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .planner-progress {
+    margin-left: auto;
+    width: 120px;
+    height: 4px;
+    background: var(--bg-primary);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .planner-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  .task-list { padding: 8px; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  .task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .task-item.done .task-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+  .task-item.active .task-check {
+    border-color: var(--cyan);
+    animation: pulse-border 1.5s infinite;
+  }
+  .task-item.done .task-text { color: var(--text-muted); text-decoration: line-through; }
+  .task-item.active .task-text { color: var(--cyan); }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 var(--cyan)40; }
+    50% { box-shadow: 0 0 0 4px var(--cyan)20; }
+  }
+
+  /* ── Subagent Cards ── */
+  .subagents-container {
+    margin-bottom: 16px;
+  }
+
+  .subagents-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .subagents-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .subagent-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .subagent-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .subagent-card:hover { border-color: var(--border-active); }
+  .subagent-card.running { border-color: var(--cyan)60; }
+  .subagent-card.completed { border-color: var(--green)40; }
+
+  .subagent-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .subagent-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .subagent-icon.explore { background: var(--blue-dim); color: var(--blue); }
+  .subagent-icon.code { background: var(--green-dim); color: var(--green); }
+  .subagent-icon.research { background: var(--purple-dim); color: var(--purple); }
+  .subagent-icon.bash { background: var(--orange-dim); color: var(--orange); }
+
+  .subagent-info { flex: 1; min-width: 0; }
+  .subagent-name { font-size: 12px; font-weight: 600; }
+  .subagent-desc { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .subagent-status-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  .subagent-status-badge.running {
+    background: var(--cyan-dim);
+    color: var(--cyan);
+    animation: pulse-bg 2s infinite;
+  }
+  .subagent-status-badge.done {
+    background: var(--green-dim);
+    color: var(--green);
+  }
+
+  @keyframes pulse-bg {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .subagent-body {
+    padding: 12px 14px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .subagent-body::-webkit-scrollbar { width: 4px; }
+  .subagent-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── Tool Use Blocks ── */
+  .tool-block {
+    margin-bottom: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .tool-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-tertiary);
+    cursor: pointer;
+    user-select: none;
+  }
+  .tool-header:hover { background: var(--bg-hover); }
+
+  .tool-icon { font-size: 12px; }
+  .tool-name { font-weight: 600; color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .tool-target { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tool-time { margin-left: auto; color: var(--text-muted); font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+  .tool-chevron { color: var(--text-muted); font-size: 10px; transition: transform 0.2s; }
+  .tool-block.open .tool-chevron { transform: rotate(180deg); }
+
+  .tool-output {
+    display: none;
+    padding: 10px;
+    background: var(--bg-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    max-height: 160px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .tool-block.open .tool-output { display: block; }
+  .tool-output .line-num { color: var(--text-muted); user-select: none; margin-right: 8px; }
+  .tool-output .highlight { color: var(--yellow); }
+
+  /* ── Code Block ── */
+  .code-diff {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .code-diff-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .code-diff-file {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-secondary);
+    font-size: 11px;
+  }
+
+  .code-diff-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .code-diff-badge.modified { background: var(--orange-dim); color: var(--orange); }
+  .code-diff-badge.created { background: var(--green-dim); color: var(--green); }
+
+  .code-diff-body {
+    padding: 10px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+
+  .diff-line { padding: 0 12px; display: flex; }
+  .diff-line.add { background: #00e67610; }
+  .diff-line.remove { background: #ff525210; }
+  .diff-num { color: var(--text-muted); width: 40px; text-align: right; user-select: none; flex-shrink: 0; padding-right: 12px; }
+  .diff-sign { width: 14px; flex-shrink: 0; font-weight: 700; }
+  .diff-line.add .diff-sign { color: var(--green); }
+  .diff-line.remove .diff-sign { color: var(--red); }
+  .diff-code { flex: 1; white-space: pre; }
+  .diff-code .kw { color: #c792ea; }
+  .diff-code .str { color: #c3e88d; }
+  .diff-code .fn { color: #82aaff; }
+  .diff-code .cm { color: #546e7a; }
+  .diff-code .num { color: #f78c6c; }
+
+  /* ── Final Response ── */
+  .final-response {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .final-response p { margin-bottom: 12px; }
+  .final-response p:last-child { margin-bottom: 0; }
+
+  .final-response code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent-light);
+  }
+
+  .final-response strong { color: var(--text-primary); font-weight: 600; }
+
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+  .result-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .result-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .result-table .status-ok { color: var(--green); }
+
+  /* ── Approval Bar ── */
+  .approval-bar {
+    background: var(--orange-dim);
+    border: 1px solid var(--orange)40;
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .approval-icon { font-size: 20px; }
+  .approval-text { flex: 1; font-size: 13px; }
+  .approval-text strong { color: var(--orange); }
+  .approval-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--bg-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .approval-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-approve { background: var(--green); color: #000; }
+  .btn-approve:hover { background: #00ff88; }
+  .btn-deny { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+  .btn-deny:hover { border-color: var(--red); color: var(--red); }
+
+  /* ── Input Bar ── */
+  .input-bar {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+  }
+
+  .input-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: border-color 0.2s;
+  }
+  .input-wrapper:focus-within { border-color: var(--accent); }
+
+  .input-tools {
+    display: flex;
+    gap: 4px;
+    padding-bottom: 2px;
+  }
+
+  .input-tool-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .input-tool-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  .input-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+    min-height: 24px;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+  .input-textarea::placeholder { color: var(--text-muted); }
+
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .send-btn:hover { background: var(--accent-light); transform: scale(1.05); }
+
+  .input-hints {
+    max-width: 900px;
+    margin: 8px auto 0;
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .hint-key {
+    background: var(--bg-card);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Right Panel ── */
+  .right-panel {
+    width: 300px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .panel-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .provider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 12px;
+  }
+  .provider-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .provider-dot.ok { background: var(--green); }
+  .provider-dot.warn { background: var(--orange); }
+  .provider-label { flex: 1; color: var(--text-secondary); }
+  .provider-value { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .stat-value { font-size: 18px; font-weight: 700; }
+  .stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.blue { color: var(--blue); }
+  .stat-value.orange { color: var(--orange); }
+  .stat-value.purple { color: var(--accent-light); }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .skill-tag {
+    font-size: 11px;
+    padding: 4px 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Live Indicator ── */
+  .live-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+    margin-right: 4px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── Streaming text effect ── */
+  .streaming::after {
+    content: '|';
+    animation: cursor-blink 0.8s infinite;
+    color: var(--accent-light);
+    font-weight: 300;
+  }
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1200px) {
+    .right-panel { display: none; }
+  }
+  @media (max-width: 800px) {
+    .sidebar { display: none; }
+    .subagent-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ Sidebar ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">&#x1F99E;</div>
+    <div>
+      <div class="logo-text">OpenClaw</div>
+      <div class="logo-version">v2026.2.15</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Channels</div>
+    <div class="nav-item active">
+      <span class="nav-icon">&#x2709;</span> Telegram
+      <span class="agent-status online"></span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F4AC;</span> Discord
+      <span class="agent-status online"></span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F310;</span> Web UI
+      <span class="agent-status busy"></span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Recent Sessions</div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F527;</span> Fix navbar responsive
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F4CA;</span> SEO audit — blog
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F680;</span> Deploy landing page
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F4DD;</span> Content calendar Q1
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Agents</div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F916;</span> Main Agent
+      <span class="agent-status online"></span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x1F50D;</span> Explorer
+      <span class="agent-status online"></span>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">&#x2699;</span> Bash Runner
+      <span class="agent-status online"></span>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="model-badge">
+      <span class="model-dot"></span>
+      <div>
+        <div class="model-name">Claude Opus 4.6</div>
+        <div class="model-provider">anthropic &middot; token &middot; static</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ Main ═══ -->
+<main class="main">
+  <div class="topbar">
+    <span class="topbar-title">Telegram</span>
+    <span class="topbar-sep">/</span>
+    <span class="topbar-sub">@Pimanjushabot</span>
+    <span class="topbar-sep">&middot;</span>
+    <span class="topbar-sub" style="color:var(--cyan);"><span class="live-dot"></span> Live</span>
+    <div class="topbar-actions">
+      <button class="topbar-btn">&#x1F4CB; Logs</button>
+      <button class="topbar-btn">&#x2699; Settings</button>
+    </div>
+  </div>
+
+  <!-- ═══ Chat ═══ -->
+  <div class="chat-area" id="chat">
+
+    <!-- User Message -->
+    <div class="message">
+      <div class="user-msg">
+        <div class="avatar user">M</div>
+        <div class="msg-content">
+          <div class="msg-meta">
+            <span class="msg-author">Manjusha</span>
+            <span class="msg-channel">Telegram</span>
+            <span class="msg-time">11:42 AM</span>
+          </div>
+          Audit the SEO for printigly.com — check meta tags, heading structure, sitemap, page speed issues. Then fix any critical problems you find in the codebase and push to GitHub.
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Response -->
+    <div class="message">
+      <div class="agent-response">
+        <div class="response-header">
+          <div class="avatar agent">&#x1F99E;</div>
+          <span class="response-label">OpenClaw</span>
+          <span class="response-model">claude-opus-4-6</span>
+          <span class="response-tokens">12,847 tokens &middot; 18.3s</span>
+        </div>
+
+        <!-- Thinking -->
+        <div class="thinking-block open" onclick="this.classList.toggle('open')">
+          <div class="thinking-header">
+            <span class="thinking-icon">&#x1F9E0;</span>
+            <span class="thinking-label">Thinking</span>
+            <span class="thinking-duration">2.4s</span>
+            <span class="thinking-chevron">&#x25BC;</span>
+          </div>
+          <div class="thinking-body">
+            The user wants a full SEO audit of printigly.com. I need to break this into parallel tasks: (1) fetch and analyze the live site for meta tags, headings, and sitemap, (2) explore the codebase on GitHub for the source files, (3) run a performance check. I'll spawn subagents for the independent work, then synthesize findings and make code fixes. Let me also check if there's an existing sitemap.xml...
+          </div>
+        </div>
+
+        <!-- Task Planner -->
+        <div class="task-planner">
+          <div class="planner-header">
+            <span>&#x1F4CB;</span>
+            <span class="planner-title">Task Plan</span>
+            <span class="planner-count">5 / 7 complete</span>
+            <div class="planner-progress"><div class="planner-bar" style="width:71%"></div></div>
+          </div>
+          <div class="task-list">
+            <div class="task-item done">
+              <div class="task-check">&#x2713;</div>
+              <span class="task-text">Fetch and analyze live site meta tags</span>
+            </div>
+            <div class="task-item done">
+              <div class="task-check">&#x2713;</div>
+              <span class="task-text">Audit heading structure (H1-H6)</span>
+            </div>
+            <div class="task-item done">
+              <div class="task-check">&#x2713;</div>
+              <span class="task-text">Check sitemap.xml and robots.txt</span>
+            </div>
+            <div class="task-item done">
+              <div class="task-check">&#x2713;</div>
+              <span class="task-text">Explore codebase for source files</span>
+            </div>
+            <div class="task-item done">
+              <div class="task-check">&#x2713;</div>
+              <span class="task-text">Fix critical SEO issues in code</span>
+            </div>
+            <div class="task-item active">
+              <div class="task-check"></div>
+              <span class="task-text">Committing and pushing changes to GitHub</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check"></div>
+              <span class="task-text">Generate final audit report</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subagents -->
+        <div class="subagents-container">
+          <div class="subagents-header">
+            <span>&#x26A1; 4 Subagents spawned in parallel</span>
+            <div class="subagents-line"></div>
+          </div>
+
+          <div class="subagent-grid">
+            <!-- Subagent 1: SEO Fetch -->
+            <div class="subagent-card completed">
+              <div class="subagent-head">
+                <div class="subagent-icon research">R</div>
+                <div class="subagent-info">
+                  <div class="subagent-name">SEO Analyzer</div>
+                  <div class="subagent-desc">Fetch &amp; audit printigly.com meta tags</div>
+                </div>
+                <span class="subagent-status-badge done">Done</span>
+              </div>
+              <div class="subagent-body">
+                <div class="tool-block open" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F310;</span>
+                    <span class="tool-name">WebFetch</span>
+                    <span class="tool-target">printigly.com</span>
+                    <span class="tool-time">1.2s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output"><span class="line-num">1</span>  &lt;title&gt;Printigly&lt;/title&gt;  <span class="highlight">&lt;!-- TOO SHORT --&gt;</span>
+<span class="line-num">2</span>  &lt;meta name="description" content=""&gt;  <span class="highlight">&lt;!-- EMPTY --&gt;</span>
+<span class="line-num">3</span>  &lt;h1&gt; (none found)  <span class="highlight">&lt;!-- MISSING H1 --&gt;</span>
+<span class="line-num">4</span>  &lt;h2&gt; x3, &lt;h3&gt; x1, &lt;h4&gt; x0
+<span class="line-num">5</span>  Open Graph: og:title missing, og:image missing</div>
+                </div>
+                <div class="tool-block" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F310;</span>
+                    <span class="tool-name">WebFetch</span>
+                    <span class="tool-target">printigly.com/sitemap.xml</span>
+                    <span class="tool-time">0.8s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output"><span class="highlight">404 Not Found</span> — No sitemap.xml exists.
+robots.txt also missing.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subagent 2: Codebase Explorer -->
+            <div class="subagent-card completed">
+              <div class="subagent-head">
+                <div class="subagent-icon explore">E</div>
+                <div class="subagent-info">
+                  <div class="subagent-name">Codebase Explorer</div>
+                  <div class="subagent-desc">Find HTML source files on GitHub</div>
+                </div>
+                <span class="subagent-status-badge done">Done</span>
+              </div>
+              <div class="subagent-body">
+                <div class="tool-block" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F4C1;</span>
+                    <span class="tool-name">Glob</span>
+                    <span class="tool-target">**/*.html</span>
+                    <span class="tool-time">0.3s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output">index.html
+about.html
+services.html
+contact.html
+blog/index.html</div>
+                </div>
+                <div class="tool-block" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F4C4;</span>
+                    <span class="tool-name">Read</span>
+                    <span class="tool-target">index.html (42 lines)</span>
+                    <span class="tool-time">0.1s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output">Found &lt;head&gt; section at line 3-18.
+Missing: meta description, og tags, canonical URL.
+Title is "Printigly" — needs keyword optimization.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subagent 3: Code Fixer -->
+            <div class="subagent-card completed">
+              <div class="subagent-head">
+                <div class="subagent-icon code">C</div>
+                <div class="subagent-info">
+                  <div class="subagent-name">Code Editor</div>
+                  <div class="subagent-desc">Fix SEO issues across HTML files</div>
+                </div>
+                <span class="subagent-status-badge done">Done</span>
+              </div>
+              <div class="subagent-body">
+                <div class="tool-block" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x270F;</span>
+                    <span class="tool-name">Edit</span>
+                    <span class="tool-target">index.html &middot; 4 changes</span>
+                    <span class="tool-time">0.2s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output">+ Added meta description
++ Added Open Graph tags (title, desc, image)
++ Added canonical URL
++ Changed &lt;div class="hero-title"&gt; to &lt;h1&gt;</div>
+                </div>
+                <div class="tool-block" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F4DD;</span>
+                    <span class="tool-name">Write</span>
+                    <span class="tool-target">sitemap.xml (new)</span>
+                    <span class="tool-time">0.1s</span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output">Created sitemap.xml with 5 URLs.
+Created robots.txt with sitemap reference.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subagent 4: Git Push (running) -->
+            <div class="subagent-card running">
+              <div class="subagent-head">
+                <div class="subagent-icon bash">B</div>
+                <div class="subagent-info">
+                  <div class="subagent-name">Bash Runner</div>
+                  <div class="subagent-desc">Commit &amp; push to GitHub</div>
+                </div>
+                <span class="subagent-status-badge running"><span class="live-dot"></span> Running</span>
+              </div>
+              <div class="subagent-body">
+                <div class="tool-block open" onclick="this.classList.toggle('open')">
+                  <div class="tool-header">
+                    <span class="tool-icon">&#x1F4BB;</span>
+                    <span class="tool-name">Bash</span>
+                    <span class="tool-target">git add -A && git commit</span>
+                    <span class="tool-time"><span class="live-dot"></span></span>
+                    <span class="tool-chevron">&#x25BC;</span>
+                  </div>
+                  <div class="tool-output"><span class="highlight">$</span> git add index.html sitemap.xml robots.txt
+<span class="highlight">$</span> git commit -m "fix: SEO improvements — add meta tags, OG, sitemap, H1 structure"
+[main a3f2c1d] fix: SEO improvements
+ 3 files changed, 47 insertions(+), 3 deletions(-)
+ create mode 100644 sitemap.xml
+ create mode 100644 robots.txt
+<span class="highlight">$</span> git push origin main
+Enumerating objects... <span class="streaming"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Approval Bar -->
+        <div class="approval-bar">
+          <span class="approval-icon">&#x1F6E1;</span>
+          <div class="approval-text">
+            <strong>Command requires approval</strong><br>
+            <span class="approval-cmd">git push origin main</span>
+          </div>
+          <button class="approval-btn btn-deny">Deny</button>
+          <button class="approval-btn btn-approve">Approve</button>
+        </div>
+
+        <!-- Code Diff Preview -->
+        <div class="code-diff">
+          <div class="code-diff-header">
+            <span>&#x1F4C4;</span>
+            <span class="code-diff-file">index.html</span>
+            <span class="code-diff-badge modified">Modified</span>
+          </div>
+          <div class="code-diff-body">
+            <div class="diff-line remove"><span class="diff-num">4</span><span class="diff-sign">-</span><span class="diff-code">  &lt;<span class="kw">title</span>&gt;Printigly&lt;/<span class="kw">title</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">4</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">title</span>&gt;Printigly — Custom Printing &amp; Design Services&lt;/<span class="kw">title</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">5</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">meta</span> <span class="fn">name</span>=<span class="str">"description"</span> <span class="fn">content</span>=<span class="str">"Premium printing services..."</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">6</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">meta</span> <span class="fn">property</span>=<span class="str">"og:title"</span> <span class="fn">content</span>=<span class="str">"Printigly"</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">7</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">meta</span> <span class="fn">property</span>=<span class="str">"og:description"</span> <span class="fn">content</span>=<span class="str">"Custom printing..."</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">8</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">link</span> <span class="fn">rel</span>=<span class="str">"canonical"</span> <span class="fn">href</span>=<span class="str">"https://printigly.com/"</span>&gt;</span></div>
+            <div class="diff-line"><span class="diff-num">9</span><span class="diff-sign"> </span><span class="diff-code">  &lt;<span class="kw">link</span> <span class="fn">rel</span>=<span class="str">"stylesheet"</span> <span class="fn">href</span>=<span class="str">"style.css"</span>&gt;</span></div>
+            <div class="diff-line"><span class="diff-num">...</span><span class="diff-sign"></span><span class="diff-code"></span></div>
+            <div class="diff-line remove"><span class="diff-num">24</span><span class="diff-sign">-</span><span class="diff-code">  &lt;<span class="kw">div</span> <span class="fn">class</span>=<span class="str">"hero-title"</span>&gt;Welcome to Printigly&lt;/<span class="kw">div</span>&gt;</span></div>
+            <div class="diff-line add"><span class="diff-num">24</span><span class="diff-sign">+</span><span class="diff-code">  &lt;<span class="kw">h1</span> <span class="fn">class</span>=<span class="str">"hero-title"</span>&gt;Welcome to Printigly&lt;/<span class="kw">h1</span>&gt;</span></div>
+          </div>
+        </div>
+
+        <!-- Final Response -->
+        <div class="final-response">
+          <p><strong>SEO Audit Complete.</strong> Here's what I found and fixed:</p>
+
+          <table class="result-table">
+            <tr><th>Issue</th><th>Severity</th><th>Status</th></tr>
+            <tr><td>Missing meta description</td><td style="color:var(--red)">Critical</td><td class="status-ok">Fixed</td></tr>
+            <tr><td>No H1 tag on homepage</td><td style="color:var(--red)">Critical</td><td class="status-ok">Fixed</td></tr>
+            <tr><td>Missing Open Graph tags</td><td style="color:var(--orange)">High</td><td class="status-ok">Fixed</td></tr>
+            <tr><td>No sitemap.xml</td><td style="color:var(--orange)">High</td><td class="status-ok">Created</td></tr>
+            <tr><td>No robots.txt</td><td style="color:var(--orange)">High</td><td class="status-ok">Created</td></tr>
+            <tr><td>Title too short (9 chars)</td><td style="color:var(--orange)">Medium</td><td class="status-ok">Fixed</td></tr>
+            <tr><td>No canonical URL</td><td style="color:var(--orange)">Medium</td><td class="status-ok">Fixed</td></tr>
+          </table>
+
+          <p>Changes pushed to <code>main</code> branch. The deploy should trigger automatically via your GitHub webhook.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Input ═══ -->
+  <div class="input-bar">
+    <div class="input-wrapper">
+      <div class="input-tools">
+        <button class="input-tool-btn" title="Attach file">&#x1F4CE;</button>
+        <button class="input-tool-btn" title="Skills">&#x26A1;</button>
+        <button class="input-tool-btn" title="Models">&#x1F9E0;</button>
+      </div>
+      <textarea class="input-textarea" rows="1" placeholder="Message OpenClaw... (or /skill for commands)" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="send-btn">&#x2191;</button>
+    </div>
+    <div class="input-hints">
+      <span><span class="hint-key">Enter</span> Send</span>
+      <span><span class="hint-key">Shift+Enter</span> New line</span>
+      <span><span class="hint-key">/</span> Skills</span>
+      <span><span class="hint-key">@</span> Model</span>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ Right Panel ═══ -->
+<aside class="right-panel">
+  <div class="panel-header">
+    <span>&#x1F4CA;</span> Session Dashboard
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">Providers</div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Anthropic</span>
+      <span class="provider-value">token &middot; static</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Google</span>
+      <span class="provider-value">oauth &middot; 80%</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Ollama Cloud</span>
+      <span class="provider-value">api_key</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">OpenRouter</span>
+      <span class="provider-value">api_key</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot warn"></span>
+      <span class="provider-label">Z.AI</span>
+      <span class="provider-value">api_key &middot; slow</span>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">This Session</div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value green">12.8k</div>
+        <div class="stat-label">Tokens used</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value blue">4</div>
+        <div class="stat-label">Subagents</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value orange">7</div>
+        <div class="stat-label">Tool calls</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value purple">18.3s</div>
+        <div class="stat-label">Total time</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">Active Skills</div>
+    <div class="skill-tags">
+      <span class="skill-tag">&#x2699; github</span>
+      <span class="skill-tag">&#x1F4BB; coding</span>
+      <span class="skill-tag">&#x1F4AC; discord</span>
+      <span class="skill-tag">&#x2728; gemini</span>
+      <span class="skill-tag">&#x1F4F0; blogwatcher</span>
+      <span class="skill-tag">&#x1F4CB; summarize</span>
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <div class="panel-label">System</div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Gateway</span>
+      <span class="provider-value">:18789</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Tailscale</span>
+      <span class="provider-value">connected</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">Uptime</span>
+      <span class="provider-value">4d 12h</span>
+    </div>
+    <div class="provider-row">
+      <span class="provider-dot ok"></span>
+      <span class="provider-label">RAM</span>
+      <span class="provider-value">412MB / 1.8GB</span>
+    </div>
+  </div>
+</aside>
+
+<script>
+  // Auto-scroll to bottom
+  const chat = document.getElementById('chat');
+  chat.scrollTop = chat.scrollHeight;
+</script>
+</body>
+</html>
